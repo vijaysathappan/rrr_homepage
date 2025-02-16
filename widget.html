@@ -1,0 +1,845 @@
+<!-- homePage -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+
+    <script src="https://js.zohostatic.com/creator/widgets/version/1.0/widgetsdk-min.js"></script>
+    <title>Date Widget Card</title>
+    <!-- Font Awesome CDN for icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <style>
+      body {
+        margin: 0;
+        padding: 20px;
+        min-height: 100vh;
+        width: 100%;
+        overflow-y: auto;
+        background: linear-gradient(to bottom, white, rgb(94, 93, 93));
+        background-size: cover;
+        background-repeat: no-repeat;
+        font-family: Georgia, "Times New Roman", Times, serif;
+        box-sizing: border-box;
+      }
+
+      .widget-container {
+        display: flex;
+        flex-direction: column;
+        gap: 2mm;
+        margin-top: 40px; /* Added top margin */
+      }
+
+      .weather-card {
+        position: absolute;
+        margin-top: 30px; /* Adjusted for better visibility */
+        right: 20px;
+      }
+
+      .date-card {
+        background: linear-gradient(to bottom, #f87060, #102542);
+        color: #fff;
+        border-radius: 20px;
+        padding: 20px;
+        text-align: center;
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        width: 180px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      .date-day {
+        font-size: 36px;
+        line-height: 1;
+        margin: 0;
+        align-self: flex-start;
+      }
+
+      .date-month {
+        font-size: 60px;
+        font-weight: bold;
+        margin: 0;
+        align-self: center;
+      }
+
+      .date-year {
+        font-size: 24px;
+        opacity: 0.8;
+        align-self: flex-end;
+      }
+
+      .day-section {
+        margin: 0px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #102542;
+        border-radius: 25px;
+        padding: 10px;
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        width: 190px;
+      }
+
+      .day-text {
+        font-size: 18px;
+        font-weight: bold;
+        margin-left: 5px;
+        color: white;
+      }
+
+      .calendar-icon {
+        font-size: 20px;
+        color: white;
+      }
+
+      /* Streak Card */
+      .streak-card {
+        background: linear-gradient(to bottom, #eaecc6, #2bc0e4);
+        color: #fff;
+        border-radius: 20px;
+        padding: 20px;
+        text-align: center;
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        width: 140px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 5px;
+        position: absolute;
+        top: 50px; /* Position from the top */
+        right: 10px; /* Position from the right */
+      }
+
+      .streak-icon {
+        font-size: 36px;
+        color: orangered;
+      }
+
+      .streak-number {
+        font-size: 30px;
+        font-weight: bold;
+        margin: 0;
+        color: black;
+      }
+
+      /* Weather Card */
+      .weather-card {
+        color: #fff;
+        border-radius: 25px;
+        padding: 15px;
+        text-align: center;
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        width: 140px;
+        height: 160px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        position: absolute;
+        top: 145px;
+        right: 20px;
+      }
+
+      .weather-icon {
+        font-size: 50px;
+        color: white;
+      }
+
+      .temperature {
+        font-size: 60px;
+        font-weight: bold;
+        margin: 0;
+        font-family: "Times New Roman", Times, serif;
+      }
+      .dock {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 30px;
+        background-color: rgba(0, 0, 0, 0.8);
+        padding: 20px 40px;
+        border-radius: 50px;
+        box-shadow: 0 6px 25px rgba(0, 0, 0, 0.3);
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 999;
+      }
+
+      .dock-item {
+        position: relative;
+        width: 4vw; /* Using vw for relative sizing */
+        height: 4vw; /* Using vw for relative sizing */
+        cursor: pointer;
+        transition: transform 0.3s ease, opacity 0.3s ease;
+      }
+
+      .dock-item img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+        transition: transform 0.4s ease;
+      }
+
+      .dock-item:hover img {
+        transform: scale(1.2);
+      }
+
+      .dock-item:hover {
+        transform: translateY(-20px);
+      }
+
+      .dock-item:active {
+        transform: scale(1.1);
+      }
+
+      .dock-item::after {
+        content: attr(data-name);
+        position: absolute;
+        bottom: -30px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: rgb(255, 79, 79);
+        font-size: 14px;
+        font-weight: bold;
+        opacity: 0;
+        transition: opacity 0.4s ease;
+      }
+
+      .dock-item:hover::after {
+        opacity: 1;
+      }
+
+      /* Navigation Bar Styles */
+      /* .navbar {
+        position: fixed;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: black;
+        border-radius: 30px;
+        padding: 0px 1px;
+        width: 180px;
+        height: 70px;
+        justify-content: center;
+  align-items: center;
+      } */
+      .photo-stack {
+        background-color: white;
+        border-radius: 20px;
+        padding: 10px;
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        width: 220px;
+        height: 150px;
+        position: relative;
+        overflow: hidden;
+        margin-top: 10px; /* 2px gap below date-card */
+      }
+
+      .photo-stack img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border-radius: 15px;
+        opacity: 0;
+        transition: opacity 1s ease;
+        object-fit: fill;
+      }
+
+      .photo-stack img.active {
+        opacity: 1;
+      }
+
+      .product-card {
+        position: absolute;
+        margin-top: 30px;
+        right: 20px;
+        transform: translateY(-50%);
+        width: 180px;
+        height: 220px;
+        overflow: hidden;
+        border-radius: 15px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+        transition: transform 0.3s;
+      }
+
+      .product-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 15px;
+      }
+
+      .product-content {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        color: #fff;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        opacity: 0;
+        transition: opacity 0.3s;
+        border-radius: 15px;
+      }
+
+      .product-content h4 {
+        margin: 5px 0;
+      }
+
+      .product-content p {
+        margin: 5px 0;
+      }
+
+      .product-content button {
+        padding: 5px 10px;
+        background-color: #ff4747;
+        border: none;
+        border-radius: 5px;
+        color: white;
+        cursor: pointer;
+      }
+
+      .product-card.show-content .product-content {
+        opacity: 1;
+      }
+      .coupon-card-container {
+        position: absolute;
+        margin-top: 10px; /* Adjust to place it below the picture stack */
+        left: 10px; /* Aligns to the left corner */
+        z-index: 10; /* Ensures it appears above other elements */
+      }
+
+      .coupon-card {
+        width: 180px;
+        height: 100px;
+        padding: 10px;
+        border-radius: 25px;
+        background: linear-gradient(to bottom, #1f1c2c, #fcf7f8);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        text-align: center;
+        color: white;
+        cursor: pointer;
+        transition: transform 0.3s;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .coupon-card h4 {
+        margin: 0;
+        font-size: 18px;
+      }
+
+      .coupon-code {
+        font-size: 22px;
+        margin-top: 10px;
+        font-weight: bold;
+        text-transform: uppercase;
+        color: #fff;
+      }
+
+      .coupon-card.shake {
+        animation: shake 0.3s;
+      }
+
+      .coupon-card.used {
+        background: #ccc;
+        color: #666;
+        cursor: not-allowed;
+      }
+
+      .coupon-card.used .coupon-code {
+        color: #666;
+      }
+
+      @keyframes shake {
+        0%,
+        100% {
+          transform: translateX(0);
+        }
+        20%,
+        60% {
+          transform: translateX(-5px);
+        }
+        40%,
+        80% {
+          transform: translateX(5px);
+        }
+      }
+      .navbar {
+        position: fixed;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: black;
+        border-radius: 30px;
+        padding: 0px 1px;
+        width: 180px;
+        height: 70px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+      }
+
+      .navbar-logo {
+        max-height: 100%;
+        max-width: 100%;
+        object-fit: contain;
+        transition: opacity 0.3s ease;
+        position: absolute;
+      }
+
+      .default-image {
+        opacity: 1;
+      }
+
+      .hover-image {
+        opacity: 0;
+      }
+
+      .navbar:hover .default-image {
+        opacity: 0;
+      }
+
+      .navbar:hover .hover-image {
+        opacity: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar">
+      <img
+        src="/app/RRR_Logo.png"
+        alt="Logo"
+        class="navbar-logo default-image"
+      />
+      <img
+        src="/app/RRR_Logo_2.png"
+        alt="Logo Hover"
+        class="navbar-logo hover-image"
+      />
+    </nav>
+
+    <div class="widget-container">
+      <div class="date-card">
+        <div class="date-day"></div>
+        <div class="date-month"></div>
+        <div class="date-year"></div>
+      </div>
+      <div class="day-section">
+        <i class="fas fa-calendar-alt calendar-icon"></i>
+        <span class="day-text"></span>
+      </div>
+    </div>
+
+    <div class="streak-card">
+      <i class="fas fa-fire streak-icon"></i>
+      <div class="streak-number">7</div>
+    </div>
+
+    <div class="weather-card" id="weather-card">
+      <i class="fas weather-icon" id="weather-icon"></i>
+      <div class="temperature" id="temperature">--°C</div>
+      <div class="weather-description" id="weather-description">Loading...</div>
+    </div>
+
+    <div class="photo-stack" id="photo-stack">
+      <img src="/app/SJT_Tower.jpg" alt="Photo 1" />
+      <img src="/app/PRP_Tower.jpg" alt="Photo 2" />
+      <img src="/app/TT_Tower.png" alt="Photo 3" />
+      <img src="/app/MGR_Tower.png" alt="Photo 4" />
+      <img src="/app/SMV_Tower.png" alt="Photo 5" />
+    </div>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const apiKey = "92803873f6133c99a74499857a5a73b2";
+        const city = "Chennai";
+        const apiUrl = `https://cors-anywhere.herokuapp.com/http://api.weatherstack.com/current?access_key=${apiKey}&query=${city}`;
+
+        fetch(apiUrl)
+          .then((response) => response.json())
+          .then((data) => {
+            const temperature = data.current.temperature;
+            const weatherDescription = data.current.weather_descriptions[0];
+
+            document.getElementById(
+              "temperature"
+            ).innerText = `${temperature}°C`;
+            console.log(temperature);
+            document.getElementById("weather-description").innerText =
+              weatherDescription;
+          })
+          .catch((error) => {
+            console.error("Error fetching weather data:", error);
+            document.getElementById("weather-description").innerText =
+              "Unable to load";
+          });
+      });
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const photos = document.querySelectorAll("#photo-stack img");
+        let currentIndex = 0;
+
+        function showNextPhoto() {
+          photos.forEach((img, index) => {
+            img.classList.toggle("active", index === currentIndex);
+          });
+          currentIndex = (currentIndex + 1) % photos.length;
+        }
+
+        // Initial display
+        showNextPhoto();
+
+        // Change photo every 2 seconds
+        setInterval(showNextPhoto, 2000);
+      });
+    </script>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const date = new Date();
+        const day = date.getDate();
+        const monthNames = [
+          "JAN",
+          "FEB",
+          "MAR",
+          "APR",
+          "MAY",
+          "JUN",
+          "JUL",
+          "AUG",
+          "SEP",
+          "OCT",
+          "NOV",
+          "DEC",
+        ];
+        const month = monthNames[date.getMonth()];
+        const year = date.getFullYear();
+        const dayNames = [
+          "Sunday",
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday",
+        ];
+        const dayName = dayNames[date.getDay()];
+
+        document.querySelector(".date-day").innerHTML = day;
+        document.querySelector(".date-month").innerHTML = month;
+        document.querySelector(".date-year").innerHTML = year;
+        document.querySelector(".day-text").innerHTML = dayName;
+      });
+
+      document.addEventListener("DOMContentLoaded", () => {
+        // Get elements
+        const weatherCard = document.getElementById("weather-card");
+        const weatherIcon = document.getElementById("weather-icon");
+        const weatherStatus = document.getElementById("weather-status");
+        ZOHO.CREATOR.init().then(function () {
+          config = {
+            appName: "rrr",
+            reportName: "All_Weather_Db",
+          };
+
+          //get all records API
+          ZOHO.CREATOR.API.getAllRecords(config).then(function (response) {
+            //var max_streak = response.data[0].Maximum_Streak;
+            var state_val = response.data[0].State;
+            const weatherCondition = state_val;
+
+            // Set weather card styles and icons based on the condition
+            if (weatherCondition.includes("Rainy")) {
+              weatherCard.style.backgroundColor = "darkblue";
+              weatherIcon.classList.add("fa-cloud-showers-heavy");
+              weatherStatus.innerText = "Rainy";
+            } else if (weatherCondition.includes("Drizzle")) {
+              weatherCard.style.backgroundColor = "blue";
+              weatherIcon.classList.add("fa-cloud-rain");
+              weatherStatus.innerText = "Drizzle";
+            } else if (weatherCondition.includes("Sunny")) {
+              weatherCard.style.backgroundColor = "goldenrod";
+              weatherIcon.classList.add("fa-sun");
+              weatherStatus.innerText = "Sunny";
+            } else if (weatherCondition.includes("Clear")) {
+              weatherCard.style.backgroundColor = "skyblue";
+              weatherIcon.classList.add("fa-sun");
+              weatherStatus.innerText = "Clear";
+            } else if (weatherCondition.includes("Partly cloudy")) {
+              weatherCard.style.backgroundColor = "lightblue";
+              weatherIcon.classList.add("fa-cloud-sun");
+              weatherStatus.innerText = "Partly Cloudy";
+            } else if (weatherCondition.includes("Cloudy")) {
+              weatherCard.style.backgroundColor = "gray";
+              weatherIcon.classList.add("fa-cloud");
+              weatherStatus.innerText = "Cloudy";
+            } else if (weatherCondition.includes("Overcast")) {
+              weatherCard.style.backgroundColor = "darkgray";
+              weatherIcon.classList.add("fa-smog");
+              weatherStatus.innerText = "Overcast";
+            } else if (weatherCondition.includes("Mist")) {
+              weatherCard.style.backgroundColor = "lightgray";
+              weatherIcon.classList.add("fa-smog");
+              weatherStatus.innerText = "Mist";
+            } else if (weatherCondition.includes("Patchy Rain Possible")) {
+              weatherCard.style.backgroundColor = "lightblue";
+              weatherIcon.classList.add("fa-cloud-sun-rain");
+              weatherStatus.innerText = "Patchy Rain";
+            } else if (weatherCondition.includes("Patchy Snow Possible")) {
+              weatherCard.style.backgroundColor = "white";
+              weatherIcon.classList.add("fa-snowflake");
+              weatherStatus.innerText = "Patchy Snow";
+            } else if (weatherCondition.includes("Patchy Sleet Possible")) {
+              weatherCard.style.backgroundColor = "gray";
+              weatherIcon.classList.add("fa-cloud-meatball");
+              weatherStatus.innerText = "Patchy Sleet";
+            } else if (
+              weatherCondition.includes("Patchy Freezing Drizzle Possible")
+            ) {
+              weatherCard.style.backgroundColor = "lightgray";
+              weatherIcon.classList.add("fa-cloud-rain");
+              weatherStatus.innerText = "Freezing Drizzle";
+            } else if (
+              weatherCondition.includes("Thundery Outbreaks Possible")
+            ) {
+              weatherCard.style.backgroundColor = "purple";
+              weatherIcon.classList.add("fa-bolt");
+              weatherStatus.innerText = "Thunderstorm";
+            } else if (weatherCondition.includes("Blowing Snow")) {
+              weatherCard.style.backgroundColor = "white";
+              weatherIcon.classList.add("fa-snowflake");
+              weatherStatus.innerText = "Blowing Snow";
+            } else if (weatherCondition.includes("Blizzard")) {
+              weatherCard.style.backgroundColor = "whitesmoke";
+              weatherIcon.classList.add("fa-snowflake");
+              weatherStatus.innerText = "Blizzard";
+            } else if (weatherCondition.includes("Fog")) {
+              weatherCard.style.backgroundColor = "lightgray";
+              weatherIcon.classList.add("fa-smog");
+              weatherStatus.innerText = "Fog";
+            } else if (weatherCondition.includes("Freezing Fog")) {
+              weatherCard.style.backgroundColor = "lightblue";
+              weatherIcon.classList.add("fa-snowflake");
+              weatherStatus.innerText = "Freezing Fog";
+            } else if (weatherCondition.includes("Patchy Light Drizzle")) {
+              weatherCard.style.backgroundColor = "lightgray";
+              weatherIcon.classList.add("fa-cloud-rain");
+              weatherStatus.innerText = "Light Drizzle";
+            } else if (weatherCondition.includes("Light Drizzle")) {
+              weatherCard.style.backgroundColor = "gray";
+              weatherIcon.classList.add("fa-cloud-rain");
+              weatherStatus.innerText = "Light Drizzle";
+            } else if (weatherCondition.includes("Freezing Drizzle")) {
+              weatherCard.style.backgroundColor = "lightgray";
+              weatherIcon.classList.add("fa-cloud-meatball");
+              weatherStatus.innerText = "Freezing Drizzle";
+            } else if (weatherCondition.includes("Heavy Freezing Drizzle")) {
+              weatherCard.style.backgroundColor = "gray";
+              weatherIcon.classList.add("fa-cloud-meatball");
+              weatherStatus.innerText = "Heavy Freezing Drizzle";
+            } else if (weatherCondition.includes("Patchy Light Rain")) {
+              weatherCard.style.backgroundColor = "lightblue";
+              weatherIcon.classList.add("fa-cloud-sun-rain");
+              weatherStatus.innerText = "Patchy Light Rain";
+            } else if (weatherCondition.includes("Light Rain")) {
+              weatherCard.style.backgroundColor = "blue";
+              weatherIcon.classList.add("fa-cloud-rain");
+              weatherStatus.innerText = "Light Rain";
+            } else if (weatherCondition.includes("Moderate Rain at Times")) {
+              weatherCard.style.backgroundColor = "blue";
+              weatherIcon.classList.add("fa-cloud-showers-heavy");
+              weatherStatus.innerText = "Moderate Rain";
+            } else if (weatherCondition.includes("Moderate Rain")) {
+              weatherCard.style.backgroundColor = "darkblue";
+              weatherIcon.classList.add("fa-cloud-showers-heavy");
+              weatherStatus.innerText = "Moderate Rain";
+            } else if (weatherCondition.includes("Heavy Rain")) {
+              weatherCard.style.backgroundColor = "navy";
+              weatherIcon.classList.add("fa-cloud-showers-heavy");
+              weatherStatus.innerText = "Heavy Rain";
+            } else {
+              weatherCard.style.backgroundColor = "gray";
+              weatherIcon.classList.add("fa-question-circle");
+              weatherStatus.innerText = "Unknown";
+            }
+          });
+
+          // Example weather condition, change this value to test
+        });
+      });
+    </script>
+    <div class="dock">
+      <div
+        class="dock-item"
+        data-name="Home"
+        onclick="window.open('https://creatorapp.zoho.in/capstone.rrr/rrr/#Page:Home_Page','_parent')"
+      >
+      <img src="/app/home.jpg" alt="Home" />
+
+      </div>
+
+      <div class="dock-item" data-name="Ride" onclick="openPage()">
+        <img src="/app/ride.png" alt="Ride" />
+      </div>
+      <div
+        class="dock-item"
+        data-name="Profile"
+        onclick="window.open('https://creatorapp.zoho.in/capstone.rrr/rrr/#Page:Profile_Details','_parent')"
+      >
+        <img src="/app/profile.jpg" alt="Profile" />
+      </div>
+      <div
+        class="dock-item"
+        data-name="History"
+        onclick="window.open('https://creatorapp.zoho.in/capstone.rrr/rrr/#Page:User_History','_parent')"
+      >
+        <img src="/app/history.jpg" alt="History" />
+      </div>
+      <div
+        class="dock-item"
+        data-name="Issue"
+        onclick="window.open('https://creatorapp.zoho.in/capstone.rrr/rrr/#Page:Issue_Details', '_parent')"
+      >
+        <img src="/app/Issue.jpg" alt="Issue" />
+      </div>
+    </div>
+    <div class="product-card" onclick="showOffer()">
+      <img src="/app/coco_cola.jpeg" alt="Product" class="product-image" />
+      <div class="product-content" id="offer-content">
+        <h4>25% OFF!</h4>
+        <p>Limited time offer. Click below to purchase!</p>
+        <button onclick="openLink(event)">Buy Now</button>
+      </div>
+    </div>
+    <div class="coupon-card-container">
+      <div class="card coupon-card" id="couponCard" onclick="revealCoupon()">
+        <h4>Daily Coupon</h4>
+        <div class="coupon-code" id="couponCode">Tap to Reveal</div>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const dockItems = document.querySelectorAll(".dock-item");
+        dockItems.forEach((item) => {
+          item.addEventListener("click", () => {
+            alert(`You clicked on ${item.dataset.name}`);
+          });
+        });
+      });
+      function showOffer() {
+        var card = document.querySelector(".product-card");
+        card.classList.toggle("show-content");
+      }
+
+      function openLink(event) {
+        event.stopPropagation(); // Prevent triggering the card click
+        window.open("https://www.coca-colacompany.com/", "_blank"); // Open the link
+      }
+      function revealCoupon() {
+        const couponCard = document.getElementById("couponCard");
+        const couponCode = document.getElementById("couponCode");
+
+        // Check if already used today
+        const lastUsedDate = localStorage.getItem("lastUsedDate");
+        const today = new Date().toISOString().split("T")[0];
+
+        if (lastUsedDate === today) {
+          couponCode.innerHTML = "Used";
+          couponCard.classList.add("used");
+          return;
+        }
+
+        // Shake animation
+        couponCard.classList.add("shake");
+        setTimeout(() => {
+          couponCard.classList.remove("shake");
+          couponCode.innerHTML = "FREERIDE";
+          couponCard.classList.add("used");
+          localStorage.setItem("lastUsedDate", today);
+        }, 300);
+      }
+      ZOHO.CREATOR.init().then(function () {
+        config = {
+          appName: "rrr",
+          reportName: "All_Weather_Db",
+        };
+
+        //get all records API
+        ZOHO.CREATOR.API.getAllRecords(config).then(function (response) {
+          //var max_streak = response.data[0].Maximum_Streak;
+          var state = response.data[0].State;
+          var temp = response.data[0].Temperature;
+          document.querySelector("#temperature").innerText = `${temp}°C`;
+          document.querySelector("#weather-description").innerText = state;
+        });
+      });
+      function openPage() {
+        ZOHO.CREATOR.init().then(function () {
+          var queryParams = ZOHO.CREATOR.UTIL.getQueryParams();
+          var User_Id = queryParams.User_ID;
+          var config = {
+            appName: "rrr",
+            reportName: "Students_Database",
+            criteria: `(Roll_Number == "${User_Id}")`,
+          };
+
+          // Get user record ID
+          ZOHO.CREATOR.API.getAllRecords(config).then(function (response) {
+            var record_id = response.data[0].ID;
+            console.log(record_id);
+            var config_1 = {
+              appName: "rrr",
+              reportName: "Booking_DB",
+              criteria: `(User_ID = ${record_id})`,
+            };
+
+            // Check for ride_over status
+            ZOHO.CREATOR.API.getRecordCount(config_1).then(function (
+              response_1
+            ) {
+              console.log(response_1.result.records_count);
+              if (response_1.result.records_count == 1) {
+                window.open(
+                  `https://creatorapp.zoho.in/capstone.rrr/rrr/#Page:Riding_Details?User_ID=${User_Id}`,
+                  "_parent"
+                );
+              } else {
+                window.open(
+                  `https://creatorapp.zoho.in/capstone.rrr/rrr/#Page:Cycle_Booking?User_ID=${User_Id}`,
+                  "_parent"
+                );
+              }
+            });
+          });
+        });
+      }
+    </script>
+  </body>
+</html>
